@@ -1,2 +1,2 @@
-# Store API
+# Shop API
 
