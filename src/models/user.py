@@ -22,12 +22,14 @@ class BaseUser(BaseModel):
     username: str = Field(
         ...,
         description='Name used to identify users',
-        example='user'
+        example='user',
+        min_length=4
     )
     name: str = Field(
         ...,
         description="User's full name",
-        example='User'
+        example='User',
+        min_length=4
     )
     birthday: date = Field(
         ...,
@@ -53,11 +55,13 @@ class BaseUser(BaseModel):
 class NewUserRequest(BaseUser):
     password: str = Field(
         ...,
-        description=''
+        description="User's password",
+        min_length=8
     )
     confirm_password: str = Field(
         ...,
-        description=''
+        description="User's confirm password",
+        min_length=8
     )
 
     @validator('email')
@@ -66,15 +70,18 @@ class NewUserRequest(BaseUser):
 
         if user is not None:
             raise ValueError('Email already used')
-        return value
+        return value.lower()
 
     @validator('username')
     def validate_username(cls, value):
+        if not value.strip():
+            raise ValueError('Username not valid')
+
         user = user_collection.find_one({'username': value})
 
         if user is not None:
             raise ValueError('Username already used')
-        return value
+        return value.lower()
 
     @validator('confirm_password')
     def passwords_match(cls, value, values):
@@ -82,6 +89,12 @@ class NewUserRequest(BaseUser):
             raise ValueError('Passwords do not match')
         values['password'] = encrypt_password(value)
         return value
+
+    @validator('name')
+    def validate_name(cls, value):
+        if not value.strip():
+            raise ValueError('Name not valid')
+        return value.title()
 
     def dict(self, *, include: Optional[Union['AbstractSetIntStr', 'MappingIntStrAny']] = None,
              exclude: Optional[Union['AbstractSetIntStr', 'MappingIntStrAny']] = None, by_alias: bool = False,
