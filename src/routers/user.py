@@ -5,7 +5,7 @@ from starlette import status
 from starlette.responses import Response
 
 from src.models.user import BaseUser, NewUserRequest
-from src.services import user
+from src.services import UserService
 
 router = APIRouter(
     prefix='/users',
@@ -15,20 +15,22 @@ router = APIRouter(
 
 @router.get('',
             response_model=List[BaseUser])
-def list_all_users(all_users: List[BaseUser] = Depends(user.list_all_users)):
-    return all_users
+def list_all_users(service: UserService = Depends()):
+    return service.list_all_users()
 
 
 @router.post('',
              status_code=status.HTTP_201_CREATED,
              response_model=BaseUser)
-def register_user(request: NewUserRequest):
-    return user.register_user(request)
+def register_user(request: NewUserRequest,
+                  service: UserService = Depends()):
+    return service.register_user(request)
 
 
 @router.put('/{username}',
             status_code=status.HTTP_204_NO_CONTENT)
 def update_user(username: str,
-                request):
-    user.update_user(username, request)
+                request,
+                service: UserService = Depends()):
+    service.update_user(username, request)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

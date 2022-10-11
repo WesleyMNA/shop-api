@@ -1,1 +1,1 @@
-from .config import user_collection
+from .config import get_mongo_client

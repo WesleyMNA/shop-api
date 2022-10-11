@@ -1,5 +1,10 @@
 from pymongo import MongoClient
 
-cluster = MongoClient('mongodb://localhost/shop')
-db = cluster['shop']
-user_collection = db['user']
+
+def get_mongo_client():
+    cluster = MongoClient('mongodb://localhost/shop')
+
+    try:
+        yield cluster
+    finally:
+        cluster.close()

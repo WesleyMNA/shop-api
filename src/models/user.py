@@ -5,7 +5,6 @@ from typing import Optional, Union
 from pydantic import BaseModel, Field, validator, EmailStr
 
 from src.core import encrypt_password
-from src.db import user_collection
 
 
 class Gender(str, Enum):
@@ -64,23 +63,10 @@ class NewUserRequest(BaseUser):
         min_length=8
     )
 
-    @validator('email')
-    def validate_email(cls, value):
-        user = user_collection.find_one({'email': value})
-
-        if user is not None:
-            raise ValueError('Email already used')
-        return value.lower()
-
     @validator('username')
     def validate_username(cls, value):
         if not value.strip():
             raise ValueError('Username not valid')
-
-        user = user_collection.find_one({'username': value})
-
-        if user is not None:
-            raise ValueError('Username already used')
         return value.lower()
 
     @validator('confirm_password')
