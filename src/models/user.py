@@ -16,7 +16,7 @@ class BaseUser(BaseModel):
     email: EmailStr = Field(
         ...,
         description='User email',
-        example='user@email.com'
+        example='user@email.com',
     )
     username: str = Field(
         ...,
@@ -62,6 +62,10 @@ class NewUserRequest(BaseUser):
         description="User's confirm password",
         min_length=8
     )
+
+    @validator('email')
+    def validate_email(cls, value):
+        return value.lower()
 
     @validator('username')
     def validate_username(cls, value):
