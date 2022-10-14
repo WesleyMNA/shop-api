@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import Depends
+from pymongo.database import Database
 
 from src.models.user import BaseUser, NewUserRequest
 from .base import BaseService
@@ -11,8 +12,8 @@ from ..models import Conflict
 class UserService(BaseService):
 
     def __init__(self,
-                 connection: dict = Depends(get_mongo_connection)):
-        super().__init__(connection, 'user')
+                 db: Database = Depends(get_mongo_connection)):
+        super().__init__(db, 'user')
 
     def list_all_users(self) -> List[BaseUser]:
         users = self.main_collection.find({}, {'products': 0})

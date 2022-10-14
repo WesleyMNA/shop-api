@@ -6,9 +6,6 @@ def get_mongo_connection():
     db = client['shop']
 
     try:
-        yield {
-            'client': client,
-            'db': db
-        }
+        yield db
     finally:
         client.close()

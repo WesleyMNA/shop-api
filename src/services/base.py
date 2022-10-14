@@ -6,7 +6,9 @@ from pymongo.database import Database
 
 class BaseService(ABC):
 
-    def __init__(self, connection: dict, main_collection_name: str):
-        self.client: MongoClient = connection['client']
-        self.db: Database = connection['db']
+    def __init__(self, db: Database, main_collection_name: str):
+        if main_collection_name not in db.list_collection_names():
+            db.create_collection(main_collection_name)
+
+        self.db: Database = db
         self.main_collection = self.db[main_collection_name]
