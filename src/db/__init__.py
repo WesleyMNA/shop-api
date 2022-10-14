@@ -1,1 +1,1 @@
-from .config import get_mongo_client
+from .config import get_mongo_connection

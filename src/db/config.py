@@ -1,10 +1,14 @@
 from pymongo import MongoClient
 
 
-def get_mongo_client():
-    cluster = MongoClient('mongodb://localhost/shop')
+def get_mongo_connection():
+    client = MongoClient('mongodb://localhost')
+    db = client['shop']
 
     try:
-        yield cluster
+        yield {
+            'client': client,
+            'db': db
+        }
     finally:
-        cluster.close()
+        client.close()
